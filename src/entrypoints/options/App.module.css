@@ -1,0 +1,26 @@
+.page {
+  box-sizing: border-box;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 40px 24px 64px;
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, "Hiragino Sans", sans-serif;
+  color: var(--foreground);
+  background: var(--background);
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.subtitle {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}

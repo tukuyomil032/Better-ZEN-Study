@@ -1,0 +1,271 @@
+.shell {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  min-height: 100vh;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  line-height: var(--leading-body);
+  color: var(--foreground);
+  background: var(--background);
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 12px;
+  border-right: 1px solid var(--border);
+  background: var(--background);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 40px;
+  padding: 0 8px;
+}
+
+.logo {
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  background: var(--accent);
+}
+
+.brandName {
+  font-size: var(--text-base);
+  font-weight: 700;
+  letter-spacing: var(--tracking-display);
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.navItem {
+  justify-content: flex-start;
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+.navItemActive {
+  background: var(--accent-subtle);
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.navIcon {
+  flex-shrink: 0;
+  margin-right: 10px;
+}
+
+.divider {
+  height: 1px;
+  margin: 8px 8px;
+  background: var(--border);
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 100vh;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: 56px;
+  padding: 0 20px;
+  flex-shrink: 0;
+}
+
+.crumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  white-space: nowrap;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.crumbSeparator {
+  color: var(--text-muted);
+}
+
+.crumbCurrent {
+  min-width: 0;
+  color: var(--foreground);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Each crumb keeps its own name short, so a long course or chapter name cannot push the trail off
+   the bar; the full name is in the crumb's title. */
+.crumbs > * {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.crumbs > .crumbLink {
+  max-width: 14em;
+}
+
+.crumbs > .crumbCurrent {
+  max-width: 28em;
+}
+
+.tools {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.panel {
+  box-sizing: border-box;
+  flex: 1;
+  min-height: 0;
+  margin: 0 12px 12px;
+  padding: 20px 20px 24px;
+  overflow: hidden auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+}
+
+@media (max-width: 760px) {
+  .shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* On a phone the sidebar becomes a row of links above the content, scrolled sideways. */
+  .sidebar {
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    padding: 8px;
+    overflow-x: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .brand {
+    flex-shrink: 0;
+    height: 36px;
+    padding: 0 4px;
+  }
+
+  .brandName {
+    display: none;
+  }
+
+  .nav {
+    flex-direction: row;
+    flex-shrink: 0;
+    gap: 4px;
+  }
+
+  .navItem {
+    width: auto;
+    height: 36px;
+    padding: 0 10px;
+    white-space: nowrap;
+  }
+
+  .divider {
+    display: none;
+  }
+
+  .panel {
+    margin: 0 8px 8px;
+    padding: 16px;
+  }
+
+  .topbar {
+    height: auto;
+    padding: 10px 12px;
+    flex-wrap: wrap;
+  }
+}
+
+.crumbLink {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.crumbLink:hover {
+  color: var(--foreground);
+  text-decoration: underline;
+}
+
+/* The content panel fills the height of the window. Its screen fills the panel, so the blocks on
+   a screen can grow into the space instead of leaving an empty band under them. */
+.panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.panel > * {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* A movie or a test/report screen fills the window: the page itself does not scroll, the header
+   is one line, and the frame takes the height that is left. */
+.shell[data-screen="media"] {
+  height: 100dvh;
+  min-height: 0;
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.shell[data-screen="media"] .main {
+  height: 100%;
+  min-height: 0;
+}
+
+.shell[data-screen="media"] .topbar {
+  height: 48px;
+  padding: 0 16px;
+}
+
+.shell[data-screen="media"] .panel {
+  margin: 0 12px 12px;
+  padding: 12px;
+  overflow: hidden;
+}
+
+@media (max-width: 760px) {
+  .shell[data-screen="media"] {
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .shell[data-screen="media"] .topbar {
+    height: auto;
+    padding: 10px 12px;
+  }
+
+  .shell[data-screen="media"] .panel {
+    margin: 0 8px 8px;
+    padding: 10px;
+  }
+}

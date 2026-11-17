@@ -1,0 +1,51 @@
+import type { MonthlyReport } from "../../src/lib/zen-api";
+
+export const completedMonthlyResponse: MonthlyReport = {
+  year: 2026,
+  month: 6,
+  total_chapter_count: 2,
+  passed_chapter_count: 2,
+  total_material_count: 231,
+  passed_material_count: 231,
+  total_assessment_test: 1,
+  passed_assessment_test_count: 1,
+  deadline_groups: [],
+  completed_chapters: [
+    {
+      course_id: 2472,
+      chapter_id: 31713,
+      subject_category_title: "地理探究",
+      course_title: "地理探究",
+      chapter_title: "第1回",
+      total_count: 23,
+      passed_count: 23,
+      exempted: false,
+    },
+    {
+      course_id: 2472,
+      chapter_id: 31714,
+      subject_category_title: "地理探究",
+      course_title: "地理探究",
+      chapter_title: "第2回",
+      total_count: 23,
+      passed_count: 23,
+      exempted: false,
+    },
+  ],
+  passed_assessment_tests: [
+    {
+      assessment_test_id: 20,
+      course_id: 2472,
+      title: "2026年度 第1回 定期テスト",
+      subject_category_title: "地理探究",
+      course_title: "地理探究",
+      total_question: 20,
+      time_limit: 50,
+      exempted: false,
+      total_answered_question: 20,
+      scale_score: 80,
+      max_scale_score: 100,
+      drafted: false,
+    },
+  ],
+};

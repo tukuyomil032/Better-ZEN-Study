@@ -1,0 +1,46 @@
+{
+  "name": "better-zen-study",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Make better ZEN Study report life",
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "dev:firefox": "wxt -b firefox",
+    "build": "wxt build",
+    "build:firefox": "wxt build -b firefox",
+    "zip": "wxt zip",
+    "zip:firefox": "wxt zip -b firefox",
+    "compile": "tsc --noEmit",
+    "postinstall": "wxt prepare",
+    "prepare": "lefthook install",
+    "lint": "oxlint .",
+    "fmt": "oxfmt --check",
+    "test": "bun test",
+    "lint:fix": "oxlint --fix",
+    "fmt:fix": "oxfmt",
+    "release": "node scripts/request-release.mjs"
+  },
+  "dependencies": {
+    "@radix-ui/react-dialog": "^1.3.1",
+    "@radix-ui/react-switch": "^1.4.1",
+    "@radix-ui/react-tabs": "^1.2.1",
+    "geist": "1.8.2",
+    "lucide-react": "^1.73.0",
+    "motion": "^14.14.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.4",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@wxt-dev/module-react": "^1.1.5",
+    "lefthook": "^2.2.2",
+    "oxfmt": "^0.78.0",
+    "oxlint": "^1.93.0",
+    "typescript": "^7.0.2",
+    "web-ext": "^10.5.0",
+    "wxt": "^0.21.3"
+  }
+}

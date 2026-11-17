@@ -1,0 +1,76 @@
+/* Inside the shell's frames (the player and the question and report pages) the site keeps its
+   content, and only its colours and typeface are changed to match the shell.
+
+   The frame does not load the ArcUI foundation, so the dark values below are copies of its dark
+   tokens (src/components/arc/foundation.css, data-theme="dark"). Each rule is scoped to the frame
+   and to the dark theme, so the light theme keeps the site's own look. The class names used here
+   are the site's readable ones (answers-choice, explanation, exercise-item, result-card, ...). */
+
+html[data-bzs-frame] {
+  --font-body:
+    "Geist", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", system-ui, sans-serif;
+}
+
+html[data-bzs-frame] body {
+  font-family: var(--font-body);
+}
+
+html[data-bzs-frame][data-bzs-theme="dark"] {
+  --bzs-background: oklch(19% 0 0);
+  --bzs-surface: oklch(21.5% 0 0);
+  --bzs-surface-raised: oklch(24% 0 0);
+  --bzs-foreground: oklch(96% 0 0);
+  --bzs-border: oklch(29% 0 0);
+  --bzs-correct: oklch(38% 0.11 150);
+  --bzs-correct-fg: oklch(97% 0 0);
+  --bzs-note: oklch(32% 0.06 90);
+  --bzs-note-fg: oklch(94% 0 0);
+  --bzs-accent: #6ba3ff;
+}
+
+/* The root paints the page's canvas, so it needs the dark background as well as the body. The
+   colour scheme makes the browser's own scrollbars dark, so no white track is left at the edge. */
+html[data-bzs-frame][data-bzs-theme="dark"] {
+  background-color: var(--bzs-background) !important;
+  color-scheme: dark;
+}
+
+html[data-bzs-frame][data-bzs-theme="dark"] body {
+  background: var(--bzs-background) !important;
+  color: var(--bzs-foreground) !important;
+}
+
+/* Panels, answer rows, the result card, and the footer: the raised surface with the ArcUI border. */
+html[data-bzs-frame][data-bzs-theme="dark"] .exercise-item,
+html[data-bzs-frame][data-bzs-theme="dark"] .answer-area,
+html[data-bzs-frame][data-bzs-theme="dark"] .answers-choice,
+html[data-bzs-frame][data-bzs-theme="dark"] .result-card,
+html[data-bzs-frame][data-bzs-theme="dark"] .footer,
+html[data-bzs-frame][data-bzs-theme="dark"] .u-button,
+html[data-bzs-frame][data-bzs-theme="dark"] textarea {
+  background-color: var(--bzs-surface) !important;
+  color: var(--bzs-foreground) !important;
+  border-color: var(--bzs-border) !important;
+}
+
+/* The chosen correct answer keeps its meaning: a dark green with light text. */
+html[data-bzs-frame][data-bzs-theme="dark"] .answers-choice.answers-selected,
+html[data-bzs-frame][data-bzs-theme="dark"] .answers-selected,
+html[data-bzs-frame][data-bzs-theme="dark"] input.answers {
+  background-color: var(--bzs-correct) !important;
+  color: var(--bzs-correct-fg) !important;
+  border-color: var(--bzs-correct) !important;
+}
+
+/* The explanation boxes keep their meaning as a dark amber with light text. */
+html[data-bzs-frame][data-bzs-theme="dark"] .explanation {
+  background-color: var(--bzs-note) !important;
+  color: var(--bzs-note-fg) !important;
+  border-color: var(--bzs-note) !important;
+}
+
+/* Question text and links read well on the dark surfaces. */
+html[data-bzs-frame][data-bzs-theme="dark"] .exercise-item *,
+html[data-bzs-frame][data-bzs-theme="dark"] .result-card * {
+  color: inherit;
+}

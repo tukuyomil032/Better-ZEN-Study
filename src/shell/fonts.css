@@ -1,0 +1,10 @@
+/* Web fonts for the ArcUI shell and the frames inside it. Imported by each content script entry. */
+/* Geist for Latin letters and digits. It has no Japanese glyphs, so Japanese text falls
+   through to the macOS Hiragino fonts listed after it. */
+@font-face {
+  font-family: "Geist";
+  src: url("../../node_modules/geist/dist/fonts/geist-sans/Geist-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}

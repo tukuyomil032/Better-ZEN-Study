@@ -1,0 +1,9 @@
+pre-commit:
+  commands:
+    code-quality:
+      glob:
+        - "src/**"
+        - "tests/**"
+        - "scripts/**"
+      run: bun fmt:fix {staged_files} && bun lint:fix {staged_files}
+      stage_fixed: true

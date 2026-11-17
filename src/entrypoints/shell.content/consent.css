@@ -1,0 +1,160 @@
+/* The consent screen (必修授業の学習における禁止事項) that ZEN Study shows before a required course's
+   first movie. It is the site's own window: only its look is changed here, in ArcUI's tokens. Its text,
+   checkboxes, and the submit logic are the site's and stay as they are.
+
+   The window is found by its checkboxes' ids, which the site fixes (report-notice-item-1 to -6). Sizes are
+   in px, because while a site window is open the shell lifts its 16px base and rem follows the site's 10px.
+   Only the shell's own pages get this (html[data-bzs-shell]). */
+
+html[data-bzs-shell] .ReactModal__Overlay:has(#report-notice-item-1) {
+  background: color-mix(in oklab, var(--background) 72%, transparent);
+  backdrop-filter: blur(6px);
+}
+
+html[data-bzs-shell] .ReactModal__Content:has(#report-notice-item-1) {
+  box-sizing: border-box;
+  width: min(600px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-surface);
+  background: var(--surface-raised);
+  color: var(--foreground);
+  box-shadow: var(--shadow-floating);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
+  outline: none;
+}
+
+/* Heading and lead sentence. */
+html[data-bzs-shell]
+  .ReactModal__Content:has(#report-notice-item-1)
+  form
+  > div:first-child
+  > div:first-child {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+html[data-bzs-shell] .ReactModal__Content:has(#report-notice-item-1) h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+}
+
+html[data-bzs-shell]
+  .ReactModal__Content:has(#report-notice-item-1)
+  form
+  > div:first-child
+  > div:first-child
+  p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* The list of items, as one quiet panel. */
+html[data-bzs-shell] .ReactModal__Content:has(#report-notice-item-1) form > div:first-child {
+  padding: 28px 28px 20px;
+}
+
+html[data-bzs-shell]
+  .ReactModal__Content:has(#report-notice-item-1)
+  form
+  > div:first-child
+  > div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px 20px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface-muted);
+}
+
+html[data-bzs-shell]
+  .ReactModal__Content:has(#report-notice-item-1)
+  form
+  > div:first-child
+  > div:last-child
+  > div {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+/* Checkboxes in ArcUI's control colour, with the site's own input kept (it still drives the form). */
+html[data-bzs-shell] .ReactModal__Content:has(#report-notice-item-1) input[type="checkbox"] {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin: 3px 0 0;
+  accent-color: var(--control-on);
+  cursor: pointer;
+}
+
+html[data-bzs-shell] .ReactModal__Content:has(#report-notice-item-1) label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--foreground);
+  cursor: pointer;
+}
+
+html[data-bzs-shell] .ReactModal__Content:has(#report-notice-item-1) label > span:first-child {
+  font-weight: 500;
+}
+
+html[data-bzs-shell] .ReactModal__Content:has(#report-notice-item-1) label > span + span {
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+/* The submit row: a hairline, then one accent button. */
+html[data-bzs-shell] .ReactModal__Content:has(#report-notice-item-1) form > div:last-child {
+  padding: 16px 28px 20px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: center;
+}
+
+html[data-bzs-shell] .ReactModal__Content:has(#report-notice-item-1) button[type="submit"] {
+  width: min(320px, 100%);
+  height: 44px;
+  margin: 0;
+  padding: 0 20px;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: var(--accent);
+  color: var(--accent-foreground, #ffffff);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition:
+    opacity var(--duration-fast, 150ms) var(--ease-standard, ease),
+    filter var(--duration-fast, 150ms) var(--ease-standard, ease);
+}
+
+html[data-bzs-shell]
+  .ReactModal__Content:has(#report-notice-item-1)
+  button[type="submit"]:not(:disabled):hover {
+  filter: brightness(1.06);
+}
+
+html[data-bzs-shell]
+  .ReactModal__Content:has(#report-notice-item-1)
+  button[type="submit"]:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}

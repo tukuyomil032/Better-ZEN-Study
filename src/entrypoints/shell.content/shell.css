@@ -1,0 +1,28 @@
+/* Hides the site's own app only while the ArcUI shell is on screen. The site stays mounted,
+   so turning the shell off brings its screen back unchanged. */
+html[data-bzs-shell] > body > #root {
+  display: none !important;
+}
+
+html[data-bzs-shell] > body > #bzs-app {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+}
+
+/* After a reload, the site opens its own movie window beside #root. That window holds a second
+   player, so the shell hides it (the frame is also stopped, see overlay-guard). The window is found
+   by the player frame inside it, whatever portal the site drew it in. The consent screen has no
+   player frame, so it stays visible. */
+html[data-bzs-shell] > body > :not(#bzs-app):has(.ReactModal__Overlay iframe[src*="/contents/"]),
+html[data-bzs-shell]
+  > body
+  > :not(#bzs-app):has(.ReactModal__Overlay iframe[data-bzs-neutralized]) {
+  display: none !important;
+}
+
+/* The modal's scroll lock would stop the shell from scrolling, so it is released while the shell
+   is on screen. */
+html[data-bzs-shell] > body.ReactModal__Body--open {
+  overflow: visible !important;
+}

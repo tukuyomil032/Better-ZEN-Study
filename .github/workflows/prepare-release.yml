@@ -1,0 +1,57 @@
+name: Prepare release
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version without v prefix
+        required: true
+        type: string
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Validate and update version
+        env:
+          VERSION: ${{ inputs.version }}
+          EVENT_REF: ${{ github.ref }}
+        run: |
+          set -euo pipefail
+          test "$EVENT_REF" = refs/heads/main
+          current=$(./scripts/intelirelease read-version .github/release-setup.json)
+          VERSION=$(./scripts/intelirelease version "$VERSION" "$current")
+          if [[ "$VERSION" == *-beta.* ]]; then
+            echo "Stable channel does not accept beta version: $VERSION" >&2
+            exit 1
+          fi
+          ./scripts/intelirelease prepare "$VERSION" .github/release-setup.json
+        shell: bash
+      - name: Open pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION_INPUT: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          VERSION=$(./scripts/intelirelease version "$VERSION_INPUT")
+          branch="release/prepare-$VERSION"
+          git switch -c "$branch"
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'No release changes to propose.'
+            exit 1
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m "chore: prepare release $VERSION"
+          git push origin "$branch"
+          gh pr create --base main --head "$branch" --title "chore: prepare release $VERSION" --body "Prepare version $VERSION for release."
+        shell: bash

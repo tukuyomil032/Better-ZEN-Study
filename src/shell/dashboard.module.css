@@ -1,0 +1,475 @@
+.tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* One row of compact KPI tiles: icon, label, and the number on one line of the tile. */
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.kpi {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 88px;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  background: var(--surface-raised);
+  min-width: 0;
+}
+
+.kpiIcon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-control);
+  background: var(--accent-subtle);
+  color: var(--accent);
+}
+
+.kpiBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.kpiLabel {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.kpiValue {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+  font-variant-numeric: tabular-nums;
+  color: var(--foreground);
+}
+
+.kpiNote {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+/* A titled block that holds a grid of tiles. */
+.block {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 18px 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  background: var(--surface-raised);
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.blockHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.blockTitle {
+  margin: 0;
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.blockNote {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+/* Seven months fill the row: auto-fit stretches the tiles to the width, unlike auto-fill, which
+   would leave empty columns on the right. Narrower screens wrap to a second row. */
+.months {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+  gap: 10px;
+}
+
+.month {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease;
+}
+
+.month:hover {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+}
+
+.month:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.month[data-status="done"] {
+  border-color: var(--border-subtle);
+}
+
+.monthTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.monthTitle {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.monthDeadline {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.monthDays {
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+/* The site's badge sets 11px; the shell keeps every text at 12px or more. */
+.monthTop .badge {
+  font-size: var(--text-xs);
+}
+
+.monthProgress {
+  margin-top: 2px;
+}
+
+.monthCounts {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.muted {
+  margin: 0;
+  padding: 24px 0;
+  color: var(--text-secondary);
+}
+
+.error {
+  margin: 0;
+  padding: 24px 0;
+  color: var(--danger);
+}
+
+.placeholderHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.note {
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: var(--leading-body);
+  color: var(--text-secondary);
+}
+
+/* Course lists: search on the right of the block title, cards in a grid, pages underneath. */
+.search {
+  min-width: 220px;
+  max-width: 320px;
+  flex: 1;
+}
+
+.courseGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 10px;
+}
+
+.course {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease;
+}
+
+.course:hover {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+}
+
+.course:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.courseHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.courseSubject {
+  min-width: 0;
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+
+.courseTitle {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: var(--leading-body);
+  color: var(--foreground);
+  overflow-wrap: anywhere;
+}
+
+.courseCounts {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.pagerText {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Study record: one bar per day for the last fourteen days, and the streak figure. */
+.bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 72px;
+  padding-top: 4px;
+}
+
+.bar {
+  flex: 1;
+  min-width: 6px;
+  border-radius: 4px 4px 2px 2px;
+  background: var(--accent);
+}
+
+.bar[data-empty] {
+  background: var(--border);
+}
+
+/* The study row: the record, the pace against the plan, and the streak side by side. */
+.study {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+/* Month tile: the title and its percent on one line, then the bar, the status, and the counts. */
+.monthHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.monthPercent {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+.monthStatus {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+
+.month[data-status="active"] .monthStatus {
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.month[data-status="done"] .monthStatus {
+  color: var(--success);
+}
+
+.month[data-status="overdue"] .monthStatus {
+  color: var(--danger);
+}
+
+/* Fill the panel: the tab content takes the rest of the height. The study row takes the spare
+   height, and its chart grows with it, so no band is left empty. */
+.tabs {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.tabs [role="tabpanel"] {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* The tab bar is the first child of the Tabs root. The root is a column, so its children stretch to
+   the full width by default; the bar keeps the width of its three tabs instead. */
+.tabs > :first-child {
+  align-self: flex-start;
+}
+
+.stack {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* Month tiles keep their natural height with larger text; the status and counts sit at the bottom
+   of each tile, so the spare height is given to the study row rather than to gaps in the tiles. */
+.monthsBlock {
+  flex: 0 0 auto;
+}
+
+.monthsBlock .month {
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 18px 20px;
+}
+
+.monthsBlock .monthTitle {
+  font-size: var(--text-2xl);
+  white-space: nowrap;
+}
+
+.monthsBlock .monthPercent {
+  font-size: var(--text-xl);
+}
+
+.monthsBlock .monthStatus {
+  margin-top: auto;
+  font-size: var(--text-base);
+}
+
+.monthsBlock .monthCounts {
+  font-size: var(--text-sm);
+}
+
+.study {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.study .block {
+  display: flex;
+  flex-direction: column;
+}
+
+.study .bars {
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 120px;
+}
+
+/* Current and longest streak side by side. Each metric is its own container, so the number scales
+   with the width of its half of the block; the unit reads as part of the number. */
+.streakStats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.streakMetric {
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.streakLabel {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.streakNumber {
+  display: block;
+  min-width: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: var(--leading-display);
+  color: var(--foreground);
+}
+
+/* The counter sets its own size, so the number's size is applied to the counter itself. */
+.study .streakNumber > * {
+  font-size: clamp(var(--text-3xl), 35cqi, var(--text-5xl));
+}
+
+/* The note sits lower and reads at body size, so it is not mistaken for the figures above. */
+.streakNote {
+  margin: 8px 0 0;
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+  color: var(--text-secondary);
+}

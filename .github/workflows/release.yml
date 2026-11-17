@@ -1,0 +1,166 @@
+name: Build release
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: release-build
+  cancel-in-progress: false
+jobs:
+  resolve:
+    runs-on: ubuntu-latest
+    outputs:
+      run: ${{ steps.resolve.outputs.run }}
+      version: ${{ steps.resolve.outputs.version }}
+      tag: ${{ steps.resolve.outputs.tag }}
+      sha: ${{ steps.resolve.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - id: resolve
+        env:
+          BEFORE: ${{ github.event.before }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if [[ "$BEFORE" =~ ^0+$ ]]; then
+            echo 'run=false' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          current=$(./scripts/intelirelease read-version .github/release-setup.json)
+          old_dir=$(mktemp -d)
+          trap 'rm -rf "$old_dir"' EXIT
+          git archive "$BEFORE" | tar -x -C "$old_dir"
+          launcher="$PWD/scripts/intelirelease"
+          config="$PWD/.github/release-setup.json"
+          previous=$(cd "$old_dir" && "$launcher" read-version "$config")
+          if [[ "$current" == "$previous" ]]; then
+            echo 'run=false' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          version=$(./scripts/intelirelease version "$current" "$previous")
+          if [[ "$version" == *-beta.* ]]; then
+            echo "Stable channel does not accept beta version: $version" >&2
+            exit 1
+          fi
+          tag="v$version"
+          sha=$(git rev-parse HEAD)
+
+          if release_draft=$(gh release view "$tag" --json isDraft --jq .isDraft 2>/dev/null); then
+            if [[ "$release_draft" == false ]]; then
+              echo "Release $tag is already published; skipping build."
+              echo 'run=false' >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          fi
+
+          printf 'run=true\nversion=%s\ntag=%s\nsha=%s\n' "$version" "$tag" "$sha" >> "$GITHUB_OUTPUT"
+        shell: bash
+  build:
+    needs: resolve
+    if: needs.resolve.outputs.run == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.resolve.outputs.sha }}
+      - uses: ./.github/actions/setup
+      - name: Build Chrome zip
+        env:
+          VERSION: ${{ needs.resolve.outputs.version }}
+        run: |
+          set -euo pipefail
+          bash scripts/release-build.sh "$VERSION"
+        shell: bash
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-chrome
+          path: dist/
+          if-no-files-found: error
+  release:
+    needs: [resolve, build]
+    if: needs.resolve.outputs.run == 'true'
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.resolve.outputs.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: release-*
+          path: artifacts/
+      - name: Create or verify release draft
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.resolve.outputs.tag }}
+          SHA: ${{ needs.resolve.outputs.sha }}
+        run: |
+          set -euo pipefail
+          if gh release view "$TAG" --json isDraft --jq .isDraft >/dev/null 2>&1; then
+            is_draft=$(gh release view "$TAG" --json isDraft --jq .isDraft)
+            if [[ "$is_draft" != true ]]; then
+              echo "Release $TAG already exists and is not a draft." >&2
+              exit 1
+            fi
+            # A draft has no tag until it is published, and the tag-based API hides drafts.
+            # Compare the draft's own target instead.
+            target=$(gh release view "$TAG" --json targetCommitish --jq .targetCommitish)
+            test "$target" = "$SHA"
+            if git ls-remote --exit-code origin "refs/tags/$TAG" >/dev/null; then
+              git fetch origin "refs/tags/$TAG:refs/intelirelease/draft-tag"
+              test "$(git rev-parse 'refs/intelirelease/draft-tag^{commit}')" = "$SHA"
+            fi
+          else
+            gh release create "$TAG" --draft --title "$TAG" --generate-notes --target "$SHA"
+          fi
+        shell: bash
+      - name: Upload Chrome zip
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.resolve.outputs.tag }}
+        run: |
+          set -euo pipefail
+          shopt -s globstar nullglob
+          zips=(artifacts/**/*.zip)
+          if [[ ${#zips[@]} -ne 1 || ! -f "${zips[0]:-}" ]]; then
+            echo "Expected exactly one zip under artifacts/, found ${#zips[@]}." >&2
+            exit 1
+          fi
+          gh release upload "$TAG" "${zips[@]}" --clobber
+        shell: bash
+      - id: publish
+        name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.resolve.outputs.tag }}
+          VERSION: ${{ needs.resolve.outputs.version }}
+        run: |
+          set -euo pipefail
+          latest=true
+          releases=$(mktemp)
+          trap 'rm -f "$releases"' EXIT
+          gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/releases?per_page=100" > "$releases"
+          while IFS= read -r candidate; do
+            parsed=$(./scripts/intelirelease version "$candidate" 2>/dev/null) || continue
+            [[ "$parsed" != *-beta.* ]] || continue
+            if [[ "$(./scripts/intelirelease compare "$parsed" "$VERSION")" == 1 ]]; then
+              latest=false
+            fi
+          done < <(jq -r '.[][] | select(.draft == false and .prerelease == false) | .tag_name' "$releases")
+
+          gh release edit "$TAG" --draft=false --latest="$latest"
+        shell: bash

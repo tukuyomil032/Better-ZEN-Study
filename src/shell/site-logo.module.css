@@ -1,0 +1,20 @@
+/* The site's mark on a white tile. The image is drawn at 24px high and the tile clips it to the
+   mark, leaving out the wordmark. */
+.tile {
+  display: block;
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  box-sizing: border-box;
+  padding: 4px;
+  overflow: hidden;
+  border-radius: 9px;
+  background: #fff;
+}
+
+.image {
+  display: block;
+  width: auto;
+  height: 24px;
+  max-width: none;
+}

@@ -1,0 +1,21 @@
+/* A subject's icon on a tile in the accent colour. */
+.tile,
+.small {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: var(--radius-control);
+  background: var(--accent-subtle);
+  color: var(--accent);
+}
+
+.tile {
+  width: 32px;
+  height: 32px;
+}
+
+.small {
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+}

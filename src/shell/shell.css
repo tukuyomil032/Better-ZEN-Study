@@ -1,0 +1,45 @@
+/* ArcUI shell look. Every rule sits under html[data-bzs-shell], which the content script sets
+   only while the shell is on screen. Outside the shell these rules do nothing, so the site
+   itself is never restyled by this file.
+
+   ZEN Study sets html { font-size: 10px }. ArcUI measures everything in rem, so without the
+   change below every size comes out about 60% of what it should be. The shell reads rem at
+   16px instead.
+
+   The site's own windows (its modals, such as the consent screen before the first required movie)
+   are written in rem too. While one is open, the content script sets data-bzs-site-modal on html,
+   and the 16px base is lifted, so the site's windows come out at the site's own size. */
+
+html[data-bzs-shell] {
+  --font-body:
+    "Geist", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", system-ui, sans-serif;
+  --font-display: var(--font-body);
+  --radius-control: 10px;
+  --radius-panel: 14px;
+  --radius-surface: 18px;
+}
+
+html[data-bzs-shell]:not([data-bzs-site-modal]) {
+  font-size: 16px !important;
+}
+
+html[data-bzs-shell] :lang(ja) {
+  line-break: strict;
+}
+
+html[data-bzs-shell] :lang(ja) :is(p, h1, h2, h3, h4, h5, h6, li, label, figcaption),
+html[data-bzs-shell] :lang(ja) :is(p, h1, h2, h3, h4, h5, h6, li, label, figcaption) * {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+/* The page's own default margin would add 8px above and below the shell, so a full-height screen
+   would scroll by that much. The shell lays out the whole window itself. */
+html[data-bzs-shell] body {
+  margin: 0;
+}
+
+html[data-bzs-shell] #bzs-app {
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}

@@ -1,0 +1,41 @@
+export const monthlyResponse = {
+  year: 2026,
+  month: 12,
+  total_chapter_count: 11,
+  passed_chapter_count: 0,
+  total_material_count: 255,
+  passed_material_count: 0,
+  total_assessment_test: 1,
+  passed_assessment_test_count: 0,
+  deadline_groups: [
+    {
+      deadline: "2026-12-31",
+      assessment_tests: [
+        {
+          assessment_test_id: 20,
+          course_id: 2472,
+          title: "2026年度 第3回 定期テスト",
+          subject_category_title: "地理探究",
+          course_title: "地理探究",
+          total_question: 20,
+          time_limit: 50,
+          exempted: false,
+          total_answered_question: 0,
+          scale_score: null,
+          max_scale_score: null,
+          drafted: false,
+        },
+      ],
+      chapters: Array.from({ length: 11 }, (_, index) => ({
+        course_id: 2472,
+        chapter_id: 31713 + index,
+        subject_category_title: "地理探究",
+        course_title: "地理探究",
+        chapter_title: `第${index + 1}回`,
+        total_count: 23,
+        passed_count: 0,
+        exempted: false,
+      })),
+    },
+  ],
+};
