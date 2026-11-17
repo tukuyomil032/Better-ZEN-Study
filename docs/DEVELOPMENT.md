@@ -49,6 +49,15 @@ To load a built Chrome extension manually, run `bun run build`, open `chrome://e
 
 CI runs lint, formatting checks, tests, TypeScript compilation, and the Chrome build and ZIP packaging steps. Its Chrome ZIP is uploaded as a short-lived workflow artifact. The release workflow separately builds and publishes a Chrome ZIP after a release version is prepared and merged.
 
+## Release process
+
+1. Push the intended changes to main using Conventional Commit subjects. The release workflow uses those messages to group changes in CHANGELOG.md.
+2. Run bun run release <version> from the up-to-date main branch. For example, use bun run release 0.0.1. This starts Prepare release, which updates the package version and adds a changelog entry based on commits since the previous published GitHub Release. Before the first published release, it uses the repository history.
+3. Review the version and generated CHANGELOG.md entry in the pull request, then merge it.
+4. The merge starts Build release. It builds the Chrome ZIP, creates a draft GitHub Release using that changelog entry as the release notes, and publishes the release.
+
+The repository setting Allow GitHub Actions to create and approve pull requests must be enabled for the preparation workflow. The default GITHUB_TOKEN permissions remain read-only; the preparation job requests write access only for repository contents and pull requests. Users download the Chrome ZIP from GitHub Releases and load it as an unpacked extension; there is no automatic extension update feed.
+
 ## Source layout
 
 - `src/entrypoints/` contains the extension entry points, including the content scripts, dashboard shell, popup, options page, and background worker.

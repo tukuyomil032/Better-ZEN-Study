@@ -205,12 +205,21 @@ function prepare(v, d) {
       relative = path.relative(fs.realpathSync("."), real);
     if (relative === ".." || relative.startsWith(".." + path.sep) || path.isAbsolute(relative))
       throw Error("path outside workspace");
-    if (typeof c.notes !== "string" || changes.some(([p]) => fs.realpathSync(p) === real))
+    if (
+      typeof c.notes !== "string" ||
+      !c.notes.trim() ||
+      changes.some(([p]) => fs.realpathSync(p) === real)
+    )
       throw Error("invalid changelog");
-    changes.push([
-      c.path,
-      "## " + v + "\n\n" + c.notes.trim() + "\n\n" + fs.readFileSync(c.path, "utf8"),
-    ]);
+    const existing = fs.readFileSync(c.path, "utf8");
+    const header = /^# Changelog\r?\n/.exec(existing);
+    if (!header) throw Error("changelog must start with # Changelog");
+    if (existing.split(/\r?\n/).includes("## v" + v))
+      throw Error("changelog already contains version " + v);
+    const previous = existing.slice(header[0].length).trim();
+    const lines = ["# Changelog", "", "## v" + v, "", c.notes.trim()];
+    if (previous) lines.push("", previous);
+    changes.push([c.path, lines.join("\n") + "\n"]);
   }
   for (const [p, content] of changes) fs.writeFileSync(p, content);
 }

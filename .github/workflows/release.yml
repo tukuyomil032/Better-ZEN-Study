@@ -103,11 +103,19 @@ jobs:
         with:
           pattern: release-*
           path: artifacts/
+      - name: Prepare release notes from changelog
+        env:
+          VERSION: ${{ needs.resolve.outputs.version }}
+        run: |
+          set -euo pipefail
+          node scripts/changelog.mjs section "$VERSION" > "$RUNNER_TEMP/release-notes.md"
+          test -s "$RUNNER_TEMP/release-notes.md"
       - name: Create or verify release draft
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ needs.resolve.outputs.tag }}
           SHA: ${{ needs.resolve.outputs.sha }}
+          NOTES_FILE: ${{ runner.temp }}/release-notes.md
         run: |
           set -euo pipefail
           if gh release view "$TAG" --json isDraft --jq .isDraft >/dev/null 2>&1; then
@@ -124,8 +132,9 @@ jobs:
               git fetch origin "refs/tags/$TAG:refs/intelirelease/draft-tag"
               test "$(git rev-parse 'refs/intelirelease/draft-tag^{commit}')" = "$SHA"
             fi
+            gh release edit "$TAG" --notes-file "$NOTES_FILE"
           else
-            gh release create "$TAG" --draft --title "$TAG" --generate-notes --target "$SHA"
+            gh release create "$TAG" --draft --title "$TAG" --notes-file "$NOTES_FILE" --target "$SHA"
           fi
         shell: bash
       - name: Upload Chrome zip

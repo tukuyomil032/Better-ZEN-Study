@@ -6,12 +6,13 @@ on:
         description: Version without v prefix
         required: true
         type: string
-permissions:
-  contents: write
-  pull-requests: write
+permissions: {}
 jobs:
   prepare:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -20,9 +21,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+      - name: Find latest published release
+        id: previous
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/releases?per_page=100" > "$RUNNER_TEMP/releases.json"
+          previous_tag=$(node scripts/changelog.mjs base < "$RUNNER_TEMP/releases.json")
+          printf 'tag=%s\n' "$previous_tag" >> "$GITHUB_OUTPUT"
       - name: Validate and update version
         env:
           VERSION: ${{ inputs.version }}
+          PREVIOUS_TAG: ${{ steps.previous.outputs.tag }}
           EVENT_REF: ${{ github.ref }}
         run: |
           set -euo pipefail
@@ -33,7 +44,16 @@ jobs:
             echo "Stable channel does not accept beta version: $VERSION" >&2
             exit 1
           fi
-          ./scripts/intelirelease prepare "$VERSION" .github/release-setup.json
+          jq -e '.changelogPolicy == "managed"' .github/release-setup.json >/dev/null
+          notes_file="$RUNNER_TEMP/changelog-notes.md"
+          config_file="$RUNNER_TEMP/release-setup.json"
+          if [ -n "$PREVIOUS_TAG" ]; then
+            node scripts/changelog.mjs generate "$VERSION" "$PREVIOUS_TAG" > "$notes_file"
+          else
+            node scripts/changelog.mjs generate "$VERSION" > "$notes_file"
+          fi
+          jq --rawfile notes "$notes_file" '. + {changelog: {path: "CHANGELOG.md", notes: $notes}}' .github/release-setup.json > "$config_file"
+          ./scripts/intelirelease prepare "$VERSION" "$config_file"
         shell: bash
       - name: Open pull request
         env:
@@ -42,7 +62,13 @@ jobs:
         run: |
           set -euo pipefail
           VERSION=$(./scripts/intelirelease version "$VERSION_INPUT")
-          branch="release/prepare-$VERSION"
+          title="chore: prepare release $VERSION"
+          open_pr=$(gh pr list --base main --state open --json title,url | jq -r --arg title "$title" '[.[] | select(.title == $title)][0].url // empty')
+          if [ -n "$open_pr" ]; then
+            echo "An open release pull request already exists: $open_pr" >&2
+            exit 1
+          fi
+          branch="release/prepare-$VERSION-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           git switch -c "$branch"
           git add -A
           if git diff --cached --quiet; then
@@ -53,5 +79,5 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git commit -m "chore: prepare release $VERSION"
           git push origin "$branch"
-          gh pr create --base main --head "$branch" --title "chore: prepare release $VERSION" --body "Prepare version $VERSION for release."
+          gh pr create --base main --head "$branch" --title "$title" --body "Prepare version $VERSION for release. Review the generated entry in CHANGELOG.md."
         shell: bash

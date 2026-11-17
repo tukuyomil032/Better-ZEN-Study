@@ -7,6 +7,6 @@
   "publishMode": "auto",
   "channelMode": "stable",
   "scriptLanguage": "javascript",
-  "changelogPolicy": "preserve",
-  "setup": { "scope": "local", "delivery": "local" }
+  "changelogPolicy": "managed",
+  "setup": { "scope": "github-settings", "delivery": "local" }
 }

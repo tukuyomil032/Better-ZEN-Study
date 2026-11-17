@@ -27,6 +27,19 @@ Follow the [Development guide](docs/DEVELOPMENT.md) to install dependencies and 
 - Update the README or development documentation when a user-facing feature or workflow changes.
 - Avoid unrelated renames and formatting churn.
 
+## Release notes
+
+The release workflow generates CHANGELOG.md from commit messages since the previous published release. Use Conventional Commit subjects so the generated notes are easy to review:
+
+- feat: — Features
+- fix: — Bug Fixes
+- perf: — Performance
+- type! or a BREAKING CHANGE footer — Breaking Changes
+- chore, docs, ci, test, build, style, ref, and refactor — Maintenance
+- Other commit types — Other Changes
+
+Merge commits and release preparation commits are excluded. Review the generated entry in the release preparation pull request before merging it.
+
 ## Validation
 
 Before opening a pull request, run the checks that apply to your change:
